@@ -1,5 +1,10 @@
-# nestjs-blog
+# nestjs + angular + postgres + typeorm (blog)
 nestjs blog with angular
+#nestjs 
+#angular 
+#postgres 
+#typeorm 
+#cypress
 
 ## Backend(project-name folder)  api
 `cd project-name`  
