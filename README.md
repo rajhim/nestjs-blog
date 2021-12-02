@@ -1,5 +1,5 @@
 # nestjs-blog
-nestjs blog
+nestjs blog with angular
 
 ## Backend(project-name folder)  api
 `cd project-name`  
