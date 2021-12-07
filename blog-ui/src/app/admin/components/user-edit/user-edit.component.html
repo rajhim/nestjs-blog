@@ -1,0 +1,26 @@
+<form>
+	<div class="login-container">
+		<div class="login-content">
+
+			<mat-card>
+				<form [formGroup]="form" #formDirective="ngForm"
+  (ngSubmit)="submit()" >
+  <mat-toolbar class="login-toolbar" color="primary">{{form.value.id}}</mat-toolbar>
+					<mat-form-field>
+
+						<input autofocus type="text" matInput placeholder="Username" formControlName="username">
+					</mat-form-field>
+          <mat-form-field>
+
+						<input autofocus type="text" matInput placeholder="Name" formControlName="name">
+					</mat-form-field>
+
+
+					<button type="submit" mat-raised-button color="primary">Update</button>
+        </form>
+
+
+
+			</mat-card>
+		</div>
+	</div>
