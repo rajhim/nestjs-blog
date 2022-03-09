@@ -3,6 +3,7 @@ import { User } from './../../../../../../project-name/src/user/model/user.inter
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-user-profile',
@@ -13,15 +14,27 @@ export class UserProfileComponent implements OnInit {
   private sub?: Subscription;
   userId?: number;
   user?: User;
-  constructor(private activatedRoute: ActivatedRoute, private service: UserService) { }
+
+  constructor(private activatedRoute: ActivatedRoute,private formBuilder: FormBuilder, private service: UserService) { }
 
   ngOnInit(): void {
+
+    // this.form = this.formBuilder.group({
+    //   id: [{value: null, disabled: true}, [Validators.required]],
+    //   name:[null, [Validators.required]],
+    //   username:[null, [Validators.required]]
+    // })
 
     this.sub = this.activatedRoute.params.subscribe(params => {
       this.userId = parseInt(params['id']);
       this.service.findById(this.userId)
-        .subscribe(data=> {
+        .subscribe((data: User)=> {
           this.user = data;
+          // this.form.patchValue({
+          //   id: data.id,
+          //   name: data.name,
+          //   username:data.username
+          // })
         })
     })
   }
@@ -29,5 +42,6 @@ export class UserProfileComponent implements OnInit {
   ngOnDestroy(){
     this.sub?.unsubscribe();
   }
+
 
 }

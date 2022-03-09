@@ -47,6 +47,26 @@ export class BlogService {
     return from(this.blogRepository.find({ relations: ['author'] }));
   }
 
+  paginateAll(options: IPaginationOptions): Observable<Pagination<BlogInterface>> {
+    return from(paginate<any>(this.blogRepository, options, {
+      relations: ['author']
+    })).pipe(
+        map((blogEntries: Pagination<BlogInterface>) => blogEntries)
+    )
+  }
+
+  paginateByUser(options: IPaginationOptions, userId: number): Observable<Pagination<BlogInterface>> {
+    return from(paginate<any>(this.blogRepository, options, {
+        relations: ['author'],
+        where: [
+          {author: userId}
+        ]
+    }
+    )).pipe(
+        map((blogEntries: Pagination<BlogInterface>) => blogEntries)
+    )
+  }
+
   findByUser(userId: number): Observable<BlogInterface[] | any> {
     return from(
       this.blogRepository.find({

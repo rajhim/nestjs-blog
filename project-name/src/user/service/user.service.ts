@@ -98,10 +98,10 @@ export class UserService {
             totalItems: totalUsers,
             totalPages: Math.ceil(totalUsers / Number(options.limit))
           }
-        }; 
+        };
         return usersPageable;
       })
-    )  
+    )
 
   }
 

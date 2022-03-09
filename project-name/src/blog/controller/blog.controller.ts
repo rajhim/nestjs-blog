@@ -29,6 +29,20 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import path = require('path');
 import { join } from 'path';
+import {User} from "../../user/model/user.interface";
+
+export const storage = {
+  storage: diskStorage({
+    destination: './uploads/blog-images',
+    filename: (req, file, cb) => {
+      const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`)
+    }
+  })
+
+}
 @Controller('blogs')
 export class BlogController {
   constructor(private service: BlogService) {}
@@ -39,8 +53,23 @@ export class BlogController {
     @Body() blogs: BlogInterface,
     @Request() req,
   ): Observable<BlogInterface | any> {
-    const user = req.user.user;
+    const user = req.user;
     return this.service.create(user, blogs);
+  }
+
+  @Get('')
+  index(
+      @Query('page') page: number = 1,
+      @Query('limit') limit: number = 10
+  ) {
+    limit = limit > 100 ? 100 : limit;
+
+
+    return this.service.paginateAll({
+      limit: Number(limit),
+      page: Number(page),
+      route: ''
+    })
   }
 
   @Get()
@@ -55,6 +84,20 @@ export class BlogController {
         .pipe(catchError((err) => of({ error: err.message })));
     }
   }
+  @Get('user/:user')
+  indexByUser(
+      @Query('page') page: number = 1,
+      @Query('limit') limit: number = 10,
+      @Param('user') userId: number
+  ) {
+    limit = limit > 100 ? 100 : limit;
+
+    return this.service.paginateByUser({
+      limit: Number(limit),
+      page: Number(page),
+      route: ''
+    }, Number(userId))
+  }
 
   @Get(':id')
   findById(@Param('id') id: number): Observable<BlogInterface | any> {
@@ -63,7 +106,7 @@ export class BlogController {
       .pipe(catchError((err) => of({ error: err.message })));
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, IsUserGuard)
   @Put(':id')
   updateById(@Param('id') id: number, @Body() blog: BlogInterface): Observable<BlogInterface | any> {
     return this.service
@@ -77,5 +120,17 @@ export class BlogController {
     return this.service
       .deleteById(id)
       .pipe(catchError((err) => of({ error: err.message })));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('image/upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadFile(@UploadedFile() file, @Request() req): Observable<any> {
+    return of(file);
+  }
+
+  @Get('image/:imagename')
+  findImage(@Param('imagename') imagename, @Res() res): Observable<any> {
+    return of(res.sendFile(join(process.cwd(), 'uploads/blog-images/' + imagename)));
   }
 }

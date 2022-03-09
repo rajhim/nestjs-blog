@@ -19,7 +19,7 @@ export class IsUserGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     
     const params = request.params;
-    const user = request.user.user;
+    const user = request.user;
     console.log('is User guard request', user);
     return this.userService.findById(user.id).pipe(
         map((user: User)=> {
